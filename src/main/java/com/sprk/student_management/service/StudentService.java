@@ -9,4 +9,6 @@ public interface StudentService {
     StudentDto saveStudent(StudentDto studentDto);
 
     List<StudentDto> getAllStudentLists();
+
+    StudentDto getStudentByRollNo(int rollNo);
 }

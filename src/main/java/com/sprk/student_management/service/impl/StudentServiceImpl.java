@@ -51,4 +51,12 @@ public class StudentServiceImpl implements StudentService {
         return studentDtos;
 
     }
+
+    @Override
+    public StudentDto getStudentByRollNo(int rollNo) {
+        Student student = studentRepository.findById(rollNo).orElse(null);
+
+        return studentMapper.mapStudentToStudentDto(student);
+    }
+
 }
