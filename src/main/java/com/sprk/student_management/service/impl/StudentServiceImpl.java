@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,5 +37,18 @@ public class StudentServiceImpl implements StudentService {
         }
         Student savedStudent = studentRepository.save(student);
         return studentMapper.mapStudentToStudentDto(savedStudent);
+    }
+
+    @Override
+    public List<StudentDto> getAllStudentLists() {
+        List<Student> students = studentRepository.findAll();
+
+        List<StudentDto> studentDtos = students
+                .stream()
+                .map(student -> studentMapper.mapStudentToStudentDto(student))
+                .toList();
+
+        return studentDtos;
+
     }
 }

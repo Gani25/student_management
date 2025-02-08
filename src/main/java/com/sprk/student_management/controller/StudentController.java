@@ -3,10 +3,9 @@ package com.sprk.student_management.controller;
 import com.sprk.student_management.dto.StudentDto;
 import com.sprk.student_management.service.StudentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/sprk")
@@ -20,4 +19,13 @@ public class StudentController {
         StudentDto savedStudentDto = studentService.saveStudent(studentDto);
         return savedStudentDto;
     }
+
+    @GetMapping("/students")
+    public List<StudentDto> getAllStudents() {
+        List<StudentDto> studentDtoList =  studentService.getAllStudentLists();
+
+        return studentDtoList;
+    }
+
+    // Get student by roll no
 }
