@@ -18,7 +18,7 @@ public class StudentDto {
     private String lastName;
 
     @NotBlank(message = "phone number cannot be empty")
-    @Pattern(regexp = "^\\+?\\d{1,3}(\\s\\d{1,5})?(\\s\\d+)+$", message = "Please enter phone number in correct format")
+    @Pattern(regexp = "^(?:\\+\\d{1,3} )?(?:\\d{5} \\d+|\\d+)$", message = "Please enter phone number in correct format")
     private String phone;
 
     @NotBlank(message = "email cannot be empty")
