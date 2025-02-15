@@ -4,6 +4,8 @@ import com.sprk.student_management.constants.StudentConstants;
 import com.sprk.student_management.dto.StudentDto;
 import com.sprk.student_management.entity.Student;
 import com.sprk.student_management.exception.StudentAlreadyExists;
+import com.sprk.student_management.exception.StudentNotFoundException;
+import com.sprk.student_management.exception.StudentRollNoIncorrectException;
 import com.sprk.student_management.mapper.StudentMapper;
 import com.sprk.student_management.mapper.StudentMapperOld;
 import com.sprk.student_management.repository.StudentRepository;
@@ -17,6 +19,7 @@ import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -31,8 +34,8 @@ public class StudentServiceImpl implements StudentService {
         // Mapper
         Student student = studentMapper.mapStudentDtoToStudent(studentDto);
         // Find Student By Email Or Phone If exists thorw some error
-        Optional<Student> dbStudent = studentRepository.findByEmailOrPhone(student.getEmail(),student.getPhone());
-        if(dbStudent.isPresent()){
+        List<Student> dbStudent = studentRepository.findByEmailOrPhoneAndNotByRollNo(student.getEmail(), student.getPhone(), student.getRollNo());
+        if (!dbStudent.isEmpty()) {
             throw new StudentAlreadyExists(StudentConstants.MESSAGE_400, HttpStatus.valueOf(Integer.parseInt(StudentConstants.STATUS_400)));
         }
         Student savedStudent = studentRepository.save(student);
@@ -53,10 +56,29 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public StudentDto getStudentByRollNo(int rollNo) {
-        Student student = studentRepository.findById(rollNo).orElse(null);
+    public StudentDto getStudentByRollNo(String rollNo) {
+        if (Pattern.matches("^\\d+$", rollNo)) {
+            int rollNoInt = Integer.parseInt(rollNo);
+            Student student = studentRepository
+                    .findById(rollNoInt)
+                    .orElseThrow(() -> new StudentNotFoundException(
+                            StudentConstants.MESSAGE_NOT_FOUND_400,
+                            HttpStatus.valueOf(Integer.parseInt(StudentConstants.STATUS_400))
+                    ));
 
-        return studentMapper.mapStudentToStudentDto(student);
+            return studentMapper.mapStudentToStudentDto(student);
+        } else {
+            throw new StudentRollNoIncorrectException(
+                    StudentConstants.MESSAGE_ROLL_NO_INCORRECT_400,
+                    HttpStatus.valueOf(Integer.parseInt(StudentConstants.STATUS_400))
+            );
+        }
+
+    }
+
+    @Override
+    public void deleteStudent(StudentDto studentDto) {
+        studentRepository.delete(studentMapper.mapStudentDtoToStudent(studentDto));
     }
 
 }

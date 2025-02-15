@@ -10,5 +10,7 @@ public interface StudentService {
 
     List<StudentDto> getAllStudentLists();
 
-    StudentDto getStudentByRollNo(int rollNo);
+    StudentDto getStudentByRollNo(String rollNo);
+
+    void deleteStudent(StudentDto studentDto);
 }
